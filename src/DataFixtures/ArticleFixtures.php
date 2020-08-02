@@ -1,26 +1,34 @@
 <?php
 
-namespace App\Controller;
+namespace App\DataFixtures;
 
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Routing\Annotation\Route;
-use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ObjectManager;
 use App\Entity\Article;
 
-class ArticleAdminController extends AbstractController
+class ArticleFixtures extends BaseFixture
 {
-    /**
-     * @Route("/admin/article/new")
-     */
-    public function new(EntityManagerInterface $em)
-    {
-        die('todo');
+    private static $articleTitles = [
+        'Why Asteroids Taste Like Bacon',
+        'Life on Planet Mercury: Tan, Relaxing and Fabulous',
+        'Light Speed Travel: Fountain of Youth or Fallacy'
+    ];
 
-        $article = new Article();
-        $article->setTitle('Why Asteroids Taste Like Bacon')
-                ->setSlug('why-asteroids-taste-like-bacon-'.rand(100, 999)) 
-                ->setContent(<<<EOF
+    private static $articleImages = [
+        'asteroid.jpeg',
+        'mercury.jpeg',
+        'lightspeed.png'
+    ];
+
+    private static $articleAuthors = [
+        'Mike Ferengi',
+        'Amy Oort'
+    ];
+
+    protected function loadData(ObjectManager $manager)
+    {
+        $this->createMany(Article::class, 10, function(Article $article, $count) {
+            $article->setTitle($this->faker->randomElement(self::$articleTitles))
+                    ->setContent(<<<EOF
 Spicy **jalapeno bacon** ipsum dolor amet veniam shank in dolore. Ham hock nisi landjaeger cow,
 lorem proident [beef ribs](https://baconipsum.com/) aute enim veniam ut cillum pork chuck picanha. Dolore reprehenderit
 labore minim pork belly spare ribs cupim short loin in. Elit exercitation eiusmod dolore cow
@@ -40,21 +48,15 @@ fugiat.
 EOF
                 );
 
-        if(rand(1, 10) > 2) {
-            $article->setPublishedAt(new \DateTime(sprintf('-%d days', rand(1, 100))));
-        }
+            if($this->faker->boolean(70)) {
+                $article->setPublishedAt($this->faker->dateTimeBetween('-100 days', '-1 days'));
+            }
+    
+            $article->setAuthor($this->faker->randomElement(self::$articleAuthors))
+                    ->setHeartCount($this->faker->numberBetween(5, 100))
+                    ->setImageFilename($this->faker->randomElement(self::$articleImages));
+        });
 
-        $article->setAuthor('Mike Ferengi')
-                ->setHeartCount(rand(5, 100))
-                ->setImageFilename('asteroid.jpeg');
-
-        $em->persist($article);
-        $em->flush();
-
-        return new Response(sprintf(
-            'New article id : %s and slug %s',
-            $article->getId(),
-            $article->getSlug()
-        ));
+        $manager->flush();
     }
 }
