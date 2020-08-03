@@ -6,6 +6,7 @@ use App\Entity\Article;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\ORM\QueryBuilder;
+use Doctrine\Common\Collections\Criteria;
 
 /**
  * @method Article|null find($id, $lockMode = null, $lockVersion = null)
@@ -27,10 +28,19 @@ class ArticleRepository extends ServiceEntityRepository
     {
         $qb = $this->createQueryBuilder('a');
         return $this->addIsPublishedQueryBuilder($qb)
+                    ->leftJoin('a.tags', 't')
+                    ->addSelect('t')
                     ->orderBy('a.publishedAt', 'DESC')
                     ->getQuery()
                     ->getResult()
         ;
+    }
+
+    public static function createNonDeletedCriteria(): Criteria
+    {
+        return Criteria::create()
+                ->andWhere(Criteria::expr()->eq('isDeleted', false))
+                ->orderBy(['createdAt' => 'DESC']);
     }
 
     private function addIsPublishedQueryBuilder(QueryBuilder $qb)
