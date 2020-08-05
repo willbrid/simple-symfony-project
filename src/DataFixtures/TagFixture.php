@@ -5,7 +5,7 @@ namespace App\DataFixtures;
 use Doctrine\Persistence\ObjectManager;
 use App\Entity\Tag;
 
-class TagFixtures extends BaseFixture
+class TagFixture extends BaseFixture
 {
     protected function loadData(ObjectManager $manager)
     {

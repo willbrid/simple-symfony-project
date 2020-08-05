@@ -7,7 +7,7 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use App\Entity\Comment;
 use App\Entity\Article;
 
-class CommentFixtures extends BaseFixture implements DependentFixtureInterface
+class CommentFixture extends BaseFixture implements DependentFixtureInterface
 {
     protected function loadData(ObjectManager $manager)
     {
@@ -30,7 +30,7 @@ class CommentFixtures extends BaseFixture implements DependentFixtureInterface
     public function getDependencies()
     {
         return [
-            ArticleFixtures::class
+            ArticleFixture::class
         ];
     }
 }

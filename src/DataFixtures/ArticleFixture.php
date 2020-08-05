@@ -7,7 +7,7 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use App\Entity\Article;
 use App\Entity\Tag;
 
-class ArticleFixtures extends BaseFixture implements DependentFixtureInterface
+class ArticleFixture extends BaseFixture implements DependentFixtureInterface
 {
     private static $articleTitles = [
         'Why Asteroids Taste Like Bacon',
@@ -74,7 +74,7 @@ EOF
     public function getDependencies()
     {
         return [
-            TagFixtures::class
+            TagFixture::class
         ];
     }
 }

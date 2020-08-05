@@ -11,7 +11,7 @@ use App\Repository\CommentRepository;
 class CommentAdminController extends AbstractController
 {
     /**
-     * @Route("/comment/admin", name="comment_admin")
+     * @Route("/admin/comment", name="comment_admin")
      */
     public function index(CommentRepository $repository, Request $request, PaginatorInterface $paginator)
     {
